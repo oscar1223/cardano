@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-# Author: ORO STAKE POOL || Telegram Channel: https://t.me/oro_pool || DISCORD: https://discord.gg/DGZrM4VC5P
 # Generate block-producer keys
 # stake pool cold key (node.cert)
 # stake pool hot key (kes.skey)

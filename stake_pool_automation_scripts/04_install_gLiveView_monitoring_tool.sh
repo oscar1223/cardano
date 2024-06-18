@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Author: ORO STAKE POOL || Telegram Channel: https://t.me/oro_pool || DISCORD: https://discord.gg/DGZrM4VC5P
+
 # Install gLiveView Monitoring tool
 
 start=`date +%s.%N`

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Author: ORO STAKE POOL || Telegram Channel: https://t.me/oro_pool || DISCORD: https://discord.gg/DGZrM4VC5P
+
 # Create startup scripts for main and relay node and have systemd manage the service
 
 start=`date +%s.%N`

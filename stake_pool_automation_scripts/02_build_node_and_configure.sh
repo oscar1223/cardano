@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Author: ORO STAKE POOL || Telegram Channel: https://t.me/oro_pool || DISCORD: https://discord.gg/DGZrM4VC5P
+
 # Installs Cardano-Node GIT TAG - 1.26.2
 
 start=`date +%s.%N`

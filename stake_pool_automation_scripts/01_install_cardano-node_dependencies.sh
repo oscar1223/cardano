@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-# Author: ORO STAKE POOL || Telegram Channel: https://t.me/oro_pool || DISCORD: https://discord.gg/DGZrM4VC5P
+# Author: Óscar
 # Installs Cardano-Node dependencies:  Libsodium, CABAL, GHC
 # node's location will be in $NODE_HOME. The cluster configuration is set by $NODE_CONFIG and $NODE_BUILD_NUM.
-
+# It is highly recommended to install chrony so that your server has the local time where your administrators are located, or the most desired one.
 start=`date +%s.%N`
 
 banner="--------------------------------------------------------------------------"
