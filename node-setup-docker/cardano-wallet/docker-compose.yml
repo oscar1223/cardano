@@ -1,0 +1,137 @@
+version: "3.8"                                                                                                                                                                                                    
+                                                                                                                                                                                                                  
+services:                                                                                                                                                                                                         
+  cardano-node:
+    image: ghcr.io/intersectmbo/cardano-node:8.9.2                                                                                                                                                                                                                                                                                                                                                                          
+    environment:                                                                                                                                                                                                  
+      - NETWORK=${NETWORK:-preprod}
+      - DATA_DIR=/data
+      - CARDANO_NODE_SOCKET_PATH=/ipc/node.socket                                                                                                                                                                                                    
+    volumes:                                                                                                                                                                                                      
+      - /home/cardano/cardano-my-node/db:/ipc                                                                                                                                                                                                                                                                                                                                                              
+      - node-ipc:/ipc
+    restart: on-failure                                                                                                                                                                                           
+    healthcheck:
+      # Ping the EKG port to see if it responds.
+      # Assuming if EKG isn't up then the rest of cardano-node isn't either.
+      test: ["CMD-SHELL", "curl -f 127.0.0.1:12788 || exit 0"]
+      interval: 60s
+      timeout: 10s
+      retries: 5
+    logging:                                                                                                                                                                                                      
+      driver: "json-file"                                                                                                                                                                                         
+      options:                                                                                                                                                                                                    
+        compress: "true"                                                                                                                                                                                          
+        max-file: "10"                                                                                                                                                                                            
+        max-size: "50m"                                                                                                                                                                                           
+    container_name: cardano-node-${HOST}                                                                                                                                                                                                              
+
+  cardano-wallet:                                                                                                                                                                                                 
+    image: inputoutput/cardano-wallet:2022.12.14                                                                                                                                                                   
+    volumes:                                                                                                                                                                                                      
+      - /home/cardano/cardano-my-node/db:/wallet-db                                                                                                                                                                           
+      - node-ipc:/ipc
+    ports:                                                                                                                                                                                                        
+      - 8090:8090                                                                                                                                                                                                 
+    entrypoint: []                                                                                                                                                                                                
+    command: bash -c "                                                                                                                                                                                            
+        ([[ $$NETWORK == \"mainnet\" ]] && $$CMD --mainnet) ||                                                                                                                                                    
+        ($$CMD --testnet /config/${NETWORK}/genesis-byron.json)                                                                                                                                                   
+      "                                                                                                                                                                                                           
+    environment:                                                                                                                                                                                                  
+      CMD: "cardano-wallet serve --node-socket /ipc/node.socket --database /wallet-db --listen-address 0.0.0.0"                                                                                                   
+      NETWORK:  "mainnet"                                                                                                                                                                                                  
+    restart: on-failure
+    logging:
+      driver: "json-file"
+      options:
+        compress: "true"
+        max-file: "10"
+        max-size: "50m"
+    container_name: cardano-wallet-${HOST}     
+
+  postgres:
+    image: postgres:11.5-alpine
+    shm_size: 1g
+    environment:
+      - POSTGRES_LOGGING=true
+      - POSTGRES_DB_FILE=/run/secrets/postgres_db
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password
+      - POSTGRES_USER_FILE=/run/secrets/postgres_user
+    secrets:
+      - postgres_password
+      - postgres_user
+      - postgres_db
+    ports:
+      - ${POSTGRES_PORT:-5432}:5432
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    restart: on-failure
+    healthcheck:
+      # Use pg_isready to check postgres is running. Substitute different
+      # user `postgres` if you've setup differently to config/pgpass-mainnet
+      test: ["CMD-SHELL", "pg_isready -U kubesync  -d kdbsync"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    container_name: cardano-postgres-${HOST}     
+  
+  cardano-db-sync:
+    image: inputoutput/cardano-db-sync:13.1.0.0
+    environment:
+      - NETWORK=${NETWORK:-preprod}
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - RESTORE_SNAPSHOT=${RESTORE_SNAPSHOT:-}
+      - RESTORE_RECREATE_DB=N
+      - DATA_DIR=/data
+      - PGPASSFILE=/config/pgpass-preprod
+    depends_on:
+      # Depend on both services to be healthy before starting.
+      cardano-node:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    secrets:
+      - postgres_password
+      - postgres_db
+      - postgres_user
+    volumes:
+      - db-sync-data:/var/lib/cexplorer
+      - node-ipc:/node-ipc
+    restart: on-failure
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    container_name: cardano-db-sync-${HOST}     
+secrets:
+  postgres_db:
+    file: ./config/secrets/postgres_db
+  postgres_password:
+    file: ./config/secrets/postgres_password
+  postgres_user:
+    file: ./config/secrets/postgres_user
+  postgres_password_sync:
+    file: ./config/secrets/postgres_password_sync
+  postgres_user_sync:
+    file: ./config/secrets/postgres_user_sync
+
+
+volumes:
+  #node-mainnet-db:
+  #node-testnet-db:
+  node-alonzo-purple-db:
+  #wallet-mainnet-db:
+  wallet-testnet-db:
+  wallet-alonzo-purple-db:
+  node-ipc:
+  node-config:
+  postgres:
+  db-sync-data:

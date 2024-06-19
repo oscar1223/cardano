@@ -1,0 +1,28 @@
+version: "3.5"
+
+services:
+  cardano-wallet:
+    image: cardanofoundation/cardano-wallet:${WALLET_TAG}
+    volumes:
+      - ${WALLET_DB}:/wallet-db
+      - node-ipc:/ipc
+      - ./configs/cardano:/configs
+    ports:
+      - ${WALLET_PORT}:8090
+    entrypoint: []
+    command: bash -c "
+        ([[ $$NETWORK == \"mainnet\" ]] && $$CMD --mainnet) ||
+        ($$CMD --testnet /configs/${NETWORK}/byron-genesis.json)
+      "
+    environment:
+      CMD: "cardano-wallet serve --node-socket /ipc --database /data --listen-address 0.0.0.0"
+      NETWORK:
+    restart: on-failure
+    logging:
+      driver: "json-file"
+      options:
+        compress: "true"
+        max-file: "10"
+        max-size: "50m"
+
+

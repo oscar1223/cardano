@@ -4,7 +4,7 @@
 
 ## Descripción
 
-Scripts para la cofiguracion y ejecución de un staking pool de Cardano
+Scripts, documentos y ejemplos de código para la automatizacion de stakingpools, creación y administración de nodos
 
 ## Instalación
 
@@ -15,15 +15,27 @@ Sigue estos pasos para instalar el proyecto:
     git@github.com:oscar1223/cardano-scripts.git
     ```
 
-2. Ve al directorio del proyecto:
-    ```sh
-    cd stake_pool_automation_scripts
-    ```
+
 
 ## Uso
 
-Repetir con todos los scripts del 01 al 07 en orden:
+### Creación de un stake pool a traves de scripts shell:
+- Scripts para a automatizacion de stakepools:
+    ```sh
+    cd staking-pool-scripts
+    ```
 
-```sh
-./01_install_cardano-node_dependencies.sh
-```
+
+- ```sh ./01_install_cardano-node_dependencies.sh```
+
+- Repetir con todos los scripts del 01 al 07 en orden
+
+### Dockercompose para la creacion de node, wallet db-sync y postgres de cardano:
+- Docker-compose para desarrollar en local con el ecosistema cardano.
+    ```sh
+    cd node-setup-docker
+    ```
+
+
+- ```docker-compose up```
+
