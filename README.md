@@ -1,10 +1,12 @@
 ## CARDANO SCRIPTS
 
-![Logo del Proyecto](ada.png)
+<p align="center">
+  <img src="ada.png" alt="Logo del Proyecto" />
+</p>
 
 ## Descripción
 
-Scripts, documentos y ejemplos de código para la automatizacion de stakingpools, creación y administración de nodos
+Scripts, documentos y ejemplos de código para la automatizacion de stakingpools, creación y administración de nodos y desarrollo de Smart Contracts y dApps en el ecosistema de Cardano.
 
 ## Instalación
 
@@ -14,7 +16,6 @@ Sigue estos pasos para instalar el proyecto:
     ```sh
     git@github.com:oscar1223/cardano-scripts.git
     ```
-
 
 
 ## Uso
@@ -38,4 +39,11 @@ Sigue estos pasos para instalar el proyecto:
 
 
 - ```docker-compose up```
+
+### Ejercicios y ejemplos con Aiken:
+- Desarrollo de Smart-contracts y dApps en Cardano usando Aiken
+    ```sh
+    cd aiken
+    ```
+
 
