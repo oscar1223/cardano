@@ -1,4 +1,4 @@
-## CARDANO SCRIPTS
+# CARDANO SCRIPTS
 
 <p align="center">
   <img src="ada.png" alt="Logo del Proyecto" />
