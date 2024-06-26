@@ -1,12 +1,11 @@
 {
-    "721": {
-      "<policy_id>": {
-        "<asset_name>": {
-          "name": "MyNFT",
-          "description": "Description of MyNFT",
-          "image": "https://example.com/nft_image.png"
-        }
+  "721": {
+    "<policy_id>": {
+      "<asset_name>": {
+        "name": "MyNFT",
+        "description": "Description of MyNFT",
+        "image": "https://example.com/nft_image.png"
       }
     }
   }
-  
+}
