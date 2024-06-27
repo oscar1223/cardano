@@ -1,5 +1,6 @@
-from pycardano import PaymentKeyPair, StakeKeyPair, Address, Network
+from pycardano import PaymentSigningKey, PaymentVerificationKey, StakeSigningKey, StakeVerificationKey, Address, Network
 from mnemonic import Mnemonic
+from bip_utils import Bip39SeedGenerator, Bip44, Bip44Coins, Bip44Changes
 import os
 
 # Generar las frases semilla utilizando la librería 'mnemonic'
@@ -9,28 +10,38 @@ seed_phrase = mnemo.generate(strength=256)  # Genera una frase de 24 palabras
 # Convertir la frase semilla a una semilla binaria
 seed = mnemo.to_seed(seed_phrase)
 
-# Generar una nueva clave de pago y su correspondiente clave pública usando la semilla
-payment_key_pair = PaymentKeyPair.from_seed(seed)
+# Utilizar bip-utils para generar claves a partir de la semilla
+seed_generator = Bip39SeedGenerator(seed_phrase)
+bip44_mst = Bip44.FromSeed(seed_generator.Generate(), Bip44Coins.CARDANO_BYRON_ICARUS)
+bip44_acc = bip44_mst.Purpose().Coin().Account(0)
+bip44_chg = bip44_acc.Change(Bip44Changes.CHAIN_EXT)
 
-# Guardar la clave privada y pública en archivos
+payment_key_pair = bip44_chg.AddressIndex(0)
+staking_key_pair = bip44_chg.AddressIndex(1)
+
+# Convertir las claves a las clases correspondientes de pycardano
+payment_signing_key = PaymentSigningKey(payment_key_pair.PrivateKey().Raw().ToBytes())
+payment_verification_key = PaymentVerificationKey(payment_key_pair.PublicKey().RawCompressed().ToBytes())
+
+staking_signing_key = StakeSigningKey(staking_key_pair.PrivateKey().Raw().ToBytes())
+staking_verification_key = StakeVerificationKey(staking_key_pair.PublicKey().RawCompressed().ToBytes())
+
+# Guardar las claves privadas y públicas en archivos
 payment_skey_path = "payment.skey"
 payment_vkey_path = "payment.vkey"
 
-payment_key_pair.signing_key.save(payment_skey_path)
-payment_key_pair.verification_key.save(payment_vkey_path)
+payment_signing_key.save(payment_skey_path)
+payment_verification_key.save(payment_vkey_path)
 
-# Generar una nueva clave de staking y su correspondiente clave pública usando la semilla
-staking_key_pair = StakeKeyPair.from_seed(seed)
-
-# Guardar la clave privada y pública en archivos
+# Guardar las claves de staking en archivos
 staking_skey_path = "staking.skey"
 staking_vkey_path = "staking.vkey"
 
-staking_key_pair.signing_key.save(staking_skey_path)
-staking_key_pair.verification_key.save(staking_vkey_path)
+staking_signing_key.save(staking_skey_path)
+staking_verification_key.save(staking_vkey_path)
 
 # Crear la dirección de la billetera
-address = Address(payment_key_pair.verification_key.hash(), staking_key_pair.verification_key.hash(), network=Network.TESTNET)
+address = Address(payment_verification_key.hash(), staking_verification_key.hash(), network=Network.TESTNET)
 
 # Guardar la dirección en un archivo
 address_path = "address.txt"
