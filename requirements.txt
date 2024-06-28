@@ -1,0 +1,4 @@
+pycardano
+blockfrost-python
+bip-utils
+mnemonic

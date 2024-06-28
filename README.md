@@ -43,7 +43,7 @@ Sigue estos pasos para instalar el proyecto:
 ### Ejercicios y ejemplos con Aiken:
 - Desarrollo de Smart-contracts y dApps en Cardano usando Aiken
     ```sh
-    cd aiken
+    cd scripts
     ```
 
 
