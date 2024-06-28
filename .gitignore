@@ -1,2 +1,2 @@
-./venv
-./scripts/offchain/wallet
+venv
+scripts/offchain/wallet
